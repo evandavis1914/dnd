@@ -24,7 +24,6 @@ def roll_attribute():
 	return sum(sorted([roll_dice(6) for _ in range(4)])[1:])
 
 
-
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 races = sorted(['Elf', 'Human', 'Dwarf', 'Halfling', 'Gnome', 'Half-orc', 'Half-Elf'])
@@ -45,26 +44,26 @@ if user_race.lower() == 'elf':
 	dexterity += 2
 	constitution -= 2
 
-if user_race.lower() == 'human':
+elif user_race.lower() == 'human':
 	pass
 
-if user_race.lower() == 'dwarf':
+elif user_race.lower() == 'dwarf':
 	constitution += 2
 	charisma -= 2
 
-if user_race.lower() == 'gnome':
+elif user_race.lower() == 'gnome':
 	constitution += 2
 	strength -= 2
 
-if user_race.lower() == 'half-elf':
+elif user_race.lower() == 'half-elf':
 	pass
 
-if user_race.lower() == 'half-orc':
+elif user_race.lower() == 'half-orc':
 	strength += 2
 	intelligence -= 2
 	charisma -= 2
 
-if user_race.lower() == 'halfling':
+elif user_race.lower() == 'halfling':
 	dexterity += 2
 	strength -= 2
 
