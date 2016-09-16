@@ -35,8 +35,42 @@ while yes_no == 'n':
 	yes_no = ask_yes_no('You Have Chosen {}. Are you sure?'.format(user_race))	
 
 intelligence = roll_attribute()
+strength = roll_attribute()
+charisma = roll_attribute()
+wisdom = roll_attribute()
+dexterity = roll_attribute()
+constitution = roll_attribute()
 
-if race.lower() == 'elf':
-	intelligence += 2
+if user_race.lower() == 'elf':
+	dexterity += 2
+	constitution -= 2
 
-print(intelligence)
+if user_race.lower() == 'human':
+	pass
+
+if user_race.lower() == 'dwarf':
+	constitution += 2
+	charisma -= 2
+
+if user_race.lower() == 'gnome':
+	constitution += 2
+	strength -= 2
+
+if user_race.lower() == 'half-elf':
+	pass
+
+if user_race.lower() == 'half-orc':
+	strength += 2
+	intelligence -= 2
+	charisma -= 2
+
+if user_race.lower() == 'halfling':
+	dexterity += 2
+	strength -= 2
+
+print('intelligence =',intelligence)
+print('strength =', strength)
+print('charisma =', charisma)
+print('wisdom =', wisdom)
+print('dexterity =', dexterity)
+print('constitution =', constitution)
