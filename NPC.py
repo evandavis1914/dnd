@@ -2,30 +2,30 @@ import random
 from time import sleep
 
 races = {
-	'Elf':
+	'elf':
 	{
 		'dexterity': 2,
 		'constitution': -2		
 	},
-	'Human': {},
-	'Dwarf':
+	'human': {},
+	'dwarf':
 	{	
 		'constitution': 2,
 		'charisma': -2
 	},
-	'Gnome':
+	'gnome':
 	{
 		'constitution': 2,
 		'strength': -2
 	},
-	'Half-Elf': {},
-	'Half-Orc':
+	'half-Elf': {},
+	'half-Orc':
 	{
 		'strength': 2,
 		'intelligence' : -2,
 		'charisma': -2
 	},
-	'Halfling':
+	'halfling':
 	{
 		'dexterity': 2,
 		'strength': -2
@@ -35,8 +35,12 @@ races = {
 
 
 roles = {
-	'Wizard': {},
-	'Rogue' : {},
+	'wizard': {},
+	'rogue' : {},
+	'fighter': {},
+	'sorcerer': {},
+	'ranger':{},
+	'cleric':{},
 }
 
 
@@ -47,13 +51,17 @@ def ask_yes_no(prompt):
 	return choice
 
 
-def choose_race(races):
-	print('\nChoose A Race')
-	for idx, race in enumerate(races, 1):
-		print(idx, race)
-		sleep(.5)
-	user_choice = int(input('>>> ')) - 1
-	return races[user_choice]
+def choose_from_selection(selection, title):
+	while True:
+		print('\nChoose A {}'.format(title))
+		for idx, sel in enumerate(selection, 1):
+			print(idx, sel.capitalize())
+			sleep(.5)
+		user_choice = int(input('>>> ')) - 1
+		if user_choice > 0 and user_choice <= len(selection):
+			return selection[user_choice]
+		print('Invalid selection, dummy. Try again.')
+	
 
 
 def roll_dice(sides):
@@ -78,29 +86,45 @@ def set_attribute_scores(race):
 		stats[stat] += modifier
 	return stats
 
+
 def display_attributes(stats):
 	for stat, value in stats.items():
 		print('{:>15} = {:>2}'.format(stat.capitalize(), value))
 
-def choose_class():
-	pass
+def yes_no(func):
+	def wrapper(*args, **kwargs):
+		yes_no = 'n'
+		while yes_no == 'n':
+			data, verbiage = func(*args, **kwargs)
+			yes_no = ask_yes_no(verbiage)
+		return data
+	return wrapper
 
 
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+@yes_no
+def set_race(races):
+	user_race = choose_from_selection(sorted(races.keys()), 'Race')
+	verbiage = 'You Have Chosen {}. Are you sure?'.format(user_race)
+	return user_race, verbiage
 
-yes_no = 'n'
-while yes_no == 'n':
-	user_race = choose_race(sorted(races.keys()))
-	yes_no = ask_yes_no('You Have Chosen {}. Are you sure?'.format(user_race))	
 
-yes_no = 'n'
-while yes_no == 'n':
+@yes_no
+def set_attributes(user_race):
 	stats = set_attribute_scores(user_race)
 	display_attributes(stats)
-	yes_no = ask_yes_no('Do You Wish to Keep these Scores?')
+	verbiage = 'Do You Wish to Keep these Scores?'
+	return stats, verbiage
 
 
-# yes_no = 'n'
-# while yes_no == 'n':
+@yes_no
+def set_class(roles):
+	user_class = choose_from_selection(sorted(roles.keys()), 'Class')
+	verbiage = 'You Have Chosen {}. Are you sure?'.format(user_class)
+	return user_class, verbiage
 
 	
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+user_race = set_race(races)
+stats = set_attributes(user_race)
+user_class = set_class(roles)
