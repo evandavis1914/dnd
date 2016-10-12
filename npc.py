@@ -1,130 +1,68 @@
-import random
-from time import sleep
-
-races = {
-    'elf':
-    {
-            'dexterity': 2,
-            'constitution': -2
-    },
-    'human': {},
-    'dwarf':
-    {
-            'constitution': 2,
-            'charisma': -2
-    },
-    'gnome':
-    {
-            'constitution': 2,
-            'strength': -2
-    },
-    'half-Elf': {},
-    'half-Orc':
-    {
-            'strength': 2,
-            'intelligence' : -2,
-            'charisma': -2
-    },
-    'halfling':
-    {
-            'dexterity': 2,
-            'strength': -2
-    },
-
-}
+from utilities import *
+from races import races
+from roles import roles
 
 
-roles = {
-    'wizard': {},
-    'rogue' : {},
-    'fighter': {},
-    'sorcerer': {},
-    'ranger':{},
-    'cleric':{},
-}
+class Character(object):
 
+    def __init__(self):
+        self.name = self.get_name()
+        self.race = self.get_race()
+        self.abilities = self.get_abilities()
+        self.role = self.get_role()
 
-def ask_yes_no(prompt):
-    choice = None
-    while choice not in ['y', 'n']:
-        choice = input('\n{} (y/n) >>> '.format(prompt)).lower()
-    return choice
+    @yes_no
+    def get_name(self):
+        name = input('Choose a Name for your Adventurer! >>> ')
+        verbiage = 'You Have Chosen {}. Are you sure?'.format(name)
+        return name, verbiage
 
+    @yes_no
+    def get_role(self):
+        role = choose_from_selection(sorted(roles.keys()), 'Class')
+        verbiage = 'You Have Chosen {}. Are you sure?'.format(role)
+        return role, verbiage
 
-def choose_from_selection(selection, title):
-    while True:
-        print('\nChoose A {}'.format(title))
-        for idx, sel in enumerate(selection, 1):
-            print(idx, sel.capitalize())
-            sleep(.5)
-        user_choice = int(input('>>> ')) - 1
-        if user_choice > 0 and user_choice <= len(selection):
-            return selection[user_choice]
-        print('Invalid selection, dummy. Try again.')
+    @yes_no
+    def get_race(self):
+        race = choose_from_selection(sorted(races.keys()), 'Race')
+        verbiage = 'You Have Chosen {}. Are you sure?'.format(race)
+        return race, verbiage
 
+    @yes_no
+    def get_abilities(self):
+        stats = self.set_attribute_scores()
+        print(self.display_attributes(stats))
+        verbiage = 'Do You Wish to Keep these Scores?'
+        return stats, verbiage
 
+    def set_attribute_scores(self):
+        stats = dict(
+            intelligence = self.roll_attribute(),
+            strength = self.roll_attribute(),
+            charisma = self.roll_attribute(),
+            wisdom = self.roll_attribute(),
+            dexterity = self.roll_attribute(),
+            constitution = self.roll_attribute()
+        )
+        modifiers = races[self.race]
+        for stat, modifier in modifiers.items():
+            stats[stat] += modifier
+        return stats
 
-def roll_dice(sides):
-    return random.randint(1, sides)
+    def display_attributes(self, stats):
+        display = ''
+        for stat, value in stats.items():
+            display += '{:>15} = {:>2}\n'.format(stat.capitalize(), value)
+        return display
 
+    def roll_attribute(self):
+        return sum(sorted([roll_dice(6) for _ in range(4)])[1:])
 
-def roll_attribute():
-    return sum(sorted([roll_dice(6) for _ in range(4)])[1:])
-
-
-def set_attribute_scores(race):
-    stats = dict(
-        intelligence = roll_attribute(),
-        strength = roll_attribute(),
-        charisma = roll_attribute(),
-        wisdom = roll_attribute(),
-        dexterity = roll_attribute(),
-        constitution = roll_attribute()
-    )
-    modifiers = races[user_race]
-    for stat, modifier in modifiers.items():
-        stats[stat] += modifier
-    return stats
-
-
-def display_attributes(stats):
-    for stat, value in stats.items():
-        print('{:>15} = {:>2}'.format(stat.capitalize(), value))
-
-def yes_no(func):
-    def wrapper(*args, **kwargs):
-        yes_no = 'n'
-        while yes_no == 'n':
-            data, verbiage = func(*args, **kwargs)
-            yes_no = ask_yes_no(verbiage)
-        return data
-    return wrapper
-
-
-@yes_no
-def set_race(races):
-    user_race = choose_from_selection(sorted(races.keys()), 'Race')
-    verbiage = 'You Have Chosen {}. Are you sure?'.format(user_race)
-    return user_race, verbiage
-
-
-@yes_no
-def set_attributes(user_race):
-    stats = set_attribute_scores(user_race)
-    display_attributes(stats)
-    verbiage = 'Do You Wish to Keep these Scores?'
-    return stats, verbiage
-
-
-@yes_no
-def set_class(roles):
-    user_class = choose_from_selection(sorted(roles.keys()), 'Class')
-    verbiage = 'You Have Chosen {}. Are you sure?'.format(user_class)
-    return user_class, verbiage
-
-
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-user_race = set_race(races)
-stats = set_attributes(user_race)
-user_class = set_class(roles)
+    def __str__(self):
+        return '{} the {} {}\n{}'.format(
+            self.name,
+            self.race.title(),
+            self.role.title(),
+            self.display_attributes(self.abilities)
+        )
