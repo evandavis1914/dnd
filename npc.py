@@ -5,11 +5,11 @@ from roles import roles
 
 class Character(object):
 
-    def __init__(self):
-        self.name = self.get_name()
-        self.race = self.get_race()
-        self.abilities = self.get_abilities()
-        self.role = self.get_role()
+    def __init__(self, name=None, race=None, abilities=None, role=None):
+        self.name = name or self.get_name()
+        self.race = race or self.get_race()
+        self.abilities = abilities or self.get_abilities()
+        self.role = role or self.get_role()
 
     @yes_no
     def get_name(self):
