@@ -15,8 +15,8 @@ races = {
             'constitution': 2,
             'strength': -2
     },
-    'half-Elf': {},
-    'half-Orc':
+    'half-elf': {},
+    'half-orc':
     {
             'strength': 2,
             'intelligence' : -2,
